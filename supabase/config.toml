@@ -1,0 +1,27 @@
+project_id = "packet-rush"
+
+[api]
+enabled = true
+port = 56321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 56322
+shadow_port = 56320
+major_version = 17
+
+[studio]
+enabled = true
+port = 56323
+
+[auth]
+# Enables the standard local API keys; participants do not use Supabase Auth.
+enabled = true
+
+[realtime]
+enabled = false
+
+[storage]
+enabled = false

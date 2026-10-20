@@ -1,0 +1,173 @@
+[
+  {
+    "id": "osi-1",
+    "topic": "Modelo OSI",
+    "prompt": "¿Cuántas capas tiene el modelo OSI?",
+    "options": [
+      { "id": "a", "text": "4" },
+      { "id": "b", "text": "5" },
+      { "id": "c", "text": "7" },
+      { "id": "d", "text": "8" }
+    ],
+    "correctOption": "c",
+    "explanation": "El modelo OSI tiene siete capas. Ayudan a organizar las funciones de la comunicación en una red."
+  },
+  {
+    "id": "devices-1",
+    "topic": "Dispositivos",
+    "prompt": "¿Qué dispositivo se utiliza para conectar redes diferentes?",
+    "options": [
+      { "id": "a", "text": "Un switch de capa 2" },
+      { "id": "b", "text": "Un router" },
+      { "id": "c", "text": "Un repetidor" },
+      { "id": "d", "text": "Un cable Ethernet" }
+    ],
+    "correctOption": "b",
+    "explanation": "El router conecta redes diferentes y decide hacia dónde reenviar los paquetes usando direcciones IP."
+  },
+  {
+    "id": "topology-1",
+    "topic": "Topologías",
+    "prompt": "En una topología en estrella, ¿cómo se conectan los equipos?",
+    "options": [
+      { "id": "a", "text": "Todos a un dispositivo central" },
+      { "id": "b", "text": "Formando un círculo" },
+      { "id": "c", "text": "Todos directamente con todos" },
+      { "id": "d", "text": "A un único cable compartido, sin equipo central" }
+    ],
+    "correctOption": "a",
+    "explanation": "En estrella, los equipos se conectan a un dispositivo central, por ejemplo un switch."
+  },
+  {
+    "id": "osi-2",
+    "topic": "Modelo OSI",
+    "prompt": "¿Qué capa del modelo OSI transmite bits por un medio físico?",
+    "options": [
+      { "id": "a", "text": "Aplicación" },
+      { "id": "b", "text": "Transporte" },
+      { "id": "c", "text": "Sesión" },
+      { "id": "d", "text": "Física" }
+    ],
+    "correctOption": "d",
+    "explanation": "La capa física se ocupa de transmitir bits mediante señales eléctricas, ópticas o de radio."
+  },
+  {
+    "id": "devices-2",
+    "topic": "Dispositivos",
+    "prompt": "¿Qué dispositivo conecta normalmente varias computadoras por cable dentro de una red local?",
+    "options": [
+      { "id": "a", "text": "Un switch" },
+      { "id": "b", "text": "Una impresora" },
+      { "id": "c", "text": "Un proyector" },
+      { "id": "d", "text": "Un monitor" }
+    ],
+    "correctOption": "a",
+    "explanation": "El switch permite conectar equipos de una red local y reenviar sus tramas por los puertos correspondientes."
+  },
+  {
+    "id": "topology-2",
+    "topic": "Topologías",
+    "prompt": "¿Qué forma caracteriza una topología en anillo?",
+    "options": [
+      { "id": "a", "text": "Una estrella con un centro" },
+      { "id": "b", "text": "Una estructura de árbol" },
+      { "id": "c", "text": "Un circuito cerrado entre los nodos" },
+      { "id": "d", "text": "Un único cable lineal compartido" }
+    ],
+    "correctOption": "c",
+    "explanation": "En una topología en anillo, los nodos forman un circuito cerrado. Cada nodo se conecta con sus vecinos del anillo."
+  },
+  {
+    "id": "osi-3",
+    "topic": "Modelo OSI",
+    "prompt": "¿En qué capa del modelo OSI ubicamos el direccionamiento IP y el enrutamiento?",
+    "options": [
+      { "id": "a", "text": "Física" },
+      { "id": "b", "text": "Red" },
+      { "id": "c", "text": "Presentación" },
+      { "id": "d", "text": "Aplicación" }
+    ],
+    "correctOption": "b",
+    "explanation": "La capa de red, la tercera del modelo OSI, incluye el direccionamiento lógico y el enrutamiento de paquetes."
+  },
+  {
+    "id": "devices-3",
+    "topic": "Dispositivos",
+    "prompt": "¿Qué dirección utiliza principalmente un switch de capa 2 para reenviar una trama Ethernet?",
+    "options": [
+      { "id": "a", "text": "La dirección de correo" },
+      { "id": "b", "text": "La URL de la página" },
+      { "id": "c", "text": "La dirección MAC de destino" },
+      { "id": "d", "text": "El nombre del archivo" }
+    ],
+    "correctOption": "c",
+    "explanation": "Un switch de capa 2 aprende direcciones MAC y usa la MAC de destino para decidir por qué puerto reenviar una trama."
+  },
+  {
+    "id": "topology-3",
+    "topic": "Topologías",
+    "prompt": "¿Qué topología conecta todos los equipos a un mismo cable principal compartido?",
+    "options": [
+      { "id": "a", "text": "Estrella" },
+      { "id": "b", "text": "Malla completa" },
+      { "id": "c", "text": "Anillo" },
+      { "id": "d", "text": "Bus" }
+    ],
+    "correctOption": "d",
+    "explanation": "En la topología en bus, los equipos comparten un cable principal. Una falla en ese cable puede afectar a toda la red."
+  },
+  {
+    "id": "osi-4",
+    "topic": "Modelo OSI",
+    "prompt": "¿Cuál es el orden correcto de las capas OSI, desde la 1 hasta la 7?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Física, enlace de datos, red, transporte, sesión, presentación, aplicación"
+      },
+      {
+        "id": "b",
+        "text": "Aplicación, presentación, sesión, transporte, red, enlace de datos, física"
+      },
+      {
+        "id": "c",
+        "text": "Física, red, enlace de datos, sesión, transporte, presentación, aplicación"
+      },
+      {
+        "id": "d",
+        "text": "Red, física, transporte, enlace de datos, aplicación, sesión, presentación"
+      }
+    ],
+    "correctOption": "a",
+    "explanation": "De abajo hacia arriba: física (1), enlace de datos (2), red (3), transporte (4), sesión (5), presentación (6) y aplicación (7)."
+  },
+  {
+    "id": "devices-4",
+    "topic": "Dispositivos",
+    "prompt": "Un paquete debe salir de una red local hacia otra red. ¿Qué equipo realiza normalmente ese enrutamiento?",
+    "options": [
+      { "id": "a", "text": "Un teclado" },
+      { "id": "b", "text": "Un router" },
+      { "id": "c", "text": "Un switch que solo trabaja en capa 2" },
+      { "id": "d", "text": "Un cable de red, por sí solo" }
+    ],
+    "correctOption": "b",
+    "explanation": "El router reenvía paquetes entre redes. En casa, un mismo aparato puede integrar router, switch y punto de acceso Wi-Fi."
+  },
+  {
+    "id": "topology-4",
+    "topic": "Topologías",
+    "prompt": "En una topología en malla completa, ¿cómo están conectados los nodos?",
+    "options": [
+      { "id": "a", "text": "Todos dependen de un único nodo central" },
+      { "id": "b", "text": "Solo se conectan con un vecino" },
+      {
+        "id": "c",
+        "text": "Cada nodo tiene una conexión directa con todos los demás"
+      },
+      { "id": "d", "text": "Todos usan un solo cable principal" }
+    ],
+    "correctOption": "c",
+    "explanation": "En una malla completa, cada nodo se conecta directamente con los demás. Ofrece rutas alternativas, pero requiere más conexiones."
+  }
+]
