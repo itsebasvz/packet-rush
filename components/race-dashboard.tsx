@@ -6,8 +6,15 @@ import type { GameState, Racer } from "@/lib/types";
 import { Mascot } from "./mascot";
 import { Fireworks } from "./fireworks";
 import { RacePodium } from "./race-podium";
+import { formatRaceTime } from "@/lib/rules.mjs";
+import { BoltIcon, ClockIcon, FlameIcon } from "./game-icons";
 
-type Tracker = { code: string; arrivedIds: string[]; finalSeen: boolean };
+type Tracker = {
+  code: string;
+  arrivedIds: string[];
+  finalSeen: boolean;
+  streaks?: Record<string, number>;
+};
 type Celebration = { id: number; kind: "arrival" | "final"; players: Racer[] };
 
 export function RaceDashboard({
@@ -25,6 +32,7 @@ export function RaceDashboard({
   const tracker = useRef<Tracker | null>(null);
   const sequence = useRef(0);
   const [celebration, setCelebration] = useState<Celebration | null>(null);
+  const [hotMoment, setHotMoment] = useState<Racer[]>([]);
   const [bounds, setBounds] = useState({ width: 1200, height: 500 });
   const [page, setPage] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -95,6 +103,7 @@ export function RaceDashboard({
         JSON.stringify(events.tracker),
       );
     } catch {}
+    if (events.hot.length) setHotMoment(events.hot);
     if (events.finale) {
       setCelebration({
         id: ++sequence.current,
@@ -114,6 +123,11 @@ export function RaceDashboard({
       });
     }
   }, [state]);
+  useEffect(() => {
+    if (!hotMoment.length) return;
+    const timer = setTimeout(() => setHotMoment([]), 4500);
+    return () => clearTimeout(timer);
+  }, [hotMoment]);
   useEffect(() => {
     if (!celebration) return;
     const timer = setTimeout(
@@ -200,7 +214,15 @@ export function RaceDashboard({
       >
         <div className="race-screen-announcement">
           <span className={`pill ${final ? "reward" : ""}`}>
-            {final ? "CARRERA FINALIZADA" : "EN VIVO · REDES 1"}
+            {final ? (
+              "CARRERA FINALIZADA"
+            ) : hotMoment.length && !celebration ? (
+              <>
+                <FlameIcon size={14} /> RACHA EN LA RED
+              </>
+            ) : (
+              "EN VIVO · REDES 1"
+            )}
           </span>
           <div role="status" aria-live="polite" aria-atomic="true">
             <h1>
@@ -208,14 +230,22 @@ export function RaceDashboard({
                 ? `¡${arrivalsName} ${celebration.players.length === 1 ? "llegó" : "llegaron"} a la meta!`
                 : final
                   ? "¡Tenemos podio!"
-                  : "La red está en movimiento."}
+                  : hotMoment.length
+                    ? hotMoment.length === 1
+                      ? `¡${hotMoment[0].name} encadena ${hotMoment[0].streak}!`
+                      : `¡${hotMoment.length} paquetes en racha!`
+                    : "La red está en movimiento."}
             </h1>
             <p>
               {celebration?.kind === "arrival"
-                ? "¡Recorrido completo! Celebramos cada llegada."
+                ? celebration.players.length === 1
+                  ? `Recorrido completo en ${formatRaceTime(celebration.players[0].finishTimeMs)}. ¡Gran llegada!`
+                  : "¡Recorrido completo! Celebramos cada llegada."
                 : final
                   ? "Cada acierto cuenta. ¡Gran carrera, equipo!"
-                  : "Sigue a tu compañero. Cada respuesta es un salto."}
+                  : hotMoment.length
+                    ? "Aciertos seguidos, bonos que suman. ¡Sigue así!"
+                    : "Cada respuesta es un salto. Cada racha suma más."}
             </p>
           </div>
           {celebration?.kind === "arrival" && (
@@ -310,7 +340,7 @@ export function RaceDashboard({
               );
               return (
                 <li
-                  className={`arena-lane ${inGoal ? "in-goal" : ""} ${final && player.rank === 1 ? "arena-winner" : ""}`}
+                  className={`arena-lane ${inGoal ? "in-goal" : ""} ${player.streak >= 3 ? "arena-hot" : ""} ${final && player.rank === 1 ? "arena-winner" : ""}`}
                   key={player.id}
                 >
                   <div className="arena-lane-header">
@@ -327,7 +357,9 @@ export function RaceDashboard({
                       {player.answered}/{state.room.questionCount}
                     </span>
                     <span className="arena-lane-score">
-                      <strong>{player.points}</strong>
+                      <strong className="score-pop" key={player.points}>
+                        {player.points}
+                      </strong>
                       <small>PTS</small>
                     </span>
                   </div>
@@ -352,14 +384,44 @@ export function RaceDashboard({
                     </span>
                   </div>
                   <div className="arena-lane-caption">
-                    <span>
-                      {player.correct}{" "}
-                      {player.correct === 1 ? "acierto" : "aciertos"}
+                    <span
+                      className="arena-correct"
+                      aria-label={`${player.correct} aciertos y ${player.bonusPoints ?? 0} puntos en bonos`}
+                    >
+                      {player.correct}
+                      <span className="arena-correct-label">
+                        {" "}
+                        {player.correct === 1 ? "acierto" : "aciertos"}
+                      </span>
+                      <span className="arena-correct-check" aria-hidden="true">
+                        ✓
+                      </span>
+                      {player.bonusPoints > 0 && (
+                        <span className="arena-bonus">
+                          <BoltIcon size={11} />+{player.bonusPoints}
+                        </span>
+                      )}
                     </span>
-                    <span>
-                      {inGoal
-                        ? "EN META ✓"
-                        : `${player.answered}/${state.room.questionCount} respondidas`}
+                    {player.streak >= 3 && (
+                      <span className="streak-tag is-hot" key={player.streak}>
+                        <FlameIcon size={13} />
+                        RACHA {player.streak}
+                      </span>
+                    )}
+                    <span
+                      className={`arena-arrival-time ${inGoal ? "has-arrived" : ""}`}
+                    >
+                      {inGoal ? (
+                        <>
+                          <ClockIcon size={12} />
+                          <span>{formatRaceTime(player.finishTimeMs)}</span>
+                          <span className="arrival-check" aria-label="En meta">
+                            ✓
+                          </span>
+                        </>
+                      ) : (
+                        `${player.answered}/${state.room.questionCount} respondidas`
+                      )}
                     </span>
                   </div>
                 </li>
@@ -370,7 +432,10 @@ export function RaceDashboard({
       </section>
       <footer className="race-screen-footer">
         <p>
-          El recorrido avanza al responder. Los aciertos deciden la posición.
+          El recorrido avanza al responder.{" "}
+          {state.room.scoringVersion === 1
+            ? "Los aciertos deciden la posición."
+            : "Puntos = aciertos + rapidez + rachas."}
         </p>
         <div className="race-pages">
           {layout.pageCount > 1 ? (

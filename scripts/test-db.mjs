@@ -2,7 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { readFileSync } from "node:fs";
 import { randomBytes } from "node:crypto";
 import assert from "node:assert/strict";
-import { rankPlayers } from "../lib/rules.mjs";
+import { rankPlayers, scoreAward } from "../lib/rules.mjs";
 
 if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SECRET_KEY)
   throw Error("Configura SUPABASE_URL y SUPABASE_SECRET_KEY en .env.local.");
@@ -94,8 +94,18 @@ try {
   );
   assert(
     replies.every(
-      (s) => s.players.find((p) => p.id === first.me.id).points === 100,
+      (s) =>
+        s.players.find((p) => p.id === first.me.id).points ===
+        replies[0].me.answer.points,
     ),
+  );
+  assert.deepEqual(
+    replies.map((s) => s.me.answer),
+    replies.map(() => replies[0].me.answer),
+  );
+  assert.equal(
+    replies[0].me.answer.points,
+    scoreAward(true, replies[0].me.answer.elapsedMs).points,
   );
   const { count } = await db
     .from("rush_answers")
@@ -116,6 +126,12 @@ try {
   const timed = await cmd("state", { code }, sessions[0]);
   assert.equal(timed.me.answer.correct, false);
   assert.equal(timed.me.answer.elapsedMs, 45000);
+  assert.equal(timed.me.answer.points, 0);
+  assert.equal(timed.players.find((p) => p.id === first.me.id).streak, 0);
+  assert.equal(
+    timed.players.find((p) => p.id === first.me.id).finishTimeMs,
+    null,
+  );
   const resumed = await cmd("state", { code }, sessions[0]);
   assert.deepEqual(resumed.me.answer, timed.me.answer);
   assert.equal(
@@ -148,18 +164,129 @@ try {
   const c = second.room.code;
   await cmd("join", { code: c, name: "Finisher", avatar: "robot" }, "finisher");
   await cmd("start", { code: c }, "", true);
+  let expectedPoints = 0,
+    expectedBonus = 0;
   for (let index = 0; index < 12; index++) {
-    await cmd(
+    const reply = await cmd(
       "answer",
       { code: c, index, choice: questions[index].correctOption },
       "finisher",
     );
+    const award = scoreAward(true, reply.me.answer.elapsedMs, index);
+    expectedPoints += award.points;
+    expectedBonus += award.speedBonus + award.streakBonus;
+    for (const key of Object.keys(award))
+      assert.equal(reply.me.answer[key], award[key]);
     await cmd("next", { code: c, index }, "finisher");
   }
   const complete = await cmd("state", { code: c }, "finisher");
   assert.equal(complete.players[0].avatarColor, "blue");
   assert.equal(complete.room.status, "finished");
-  assert.equal(complete.players[0].points, 1200);
+  assert.equal(complete.players[0].points, expectedPoints);
+  assert.equal(complete.players[0].bonusPoints, expectedBonus);
+  assert.equal(complete.players[0].bestStreak, 12);
+  assert.equal(complete.players[0].streak, 12);
+  assert(complete.players[0].finishTimeMs >= 0);
+  const { data: finishAnswers, error: finishError } = await db
+    .from("rush_answers")
+    .select("answered_at")
+    .eq("player_id", complete.me.id)
+    .order("answered_at", { ascending: false })
+    .limit(1);
+  assert.ifError(finishError);
+  const { data: finishRoom, error: roomError } = await db
+    .from("rush_rooms")
+    .select("started_at")
+    .eq("code", c)
+    .single();
+  assert.ifError(roomError);
+  assert(
+    Math.abs(
+      complete.players[0].finishTimeMs -
+        (Date.parse(finishAnswers[0].answered_at) -
+          Date.parse(finishRoom.started_at)),
+    ) <= 2,
+  );
+  assert.equal(
+    (await cmd("state", { code: c }, "finisher")).players[0].finishTimeMs,
+    complete.players[0].finishTimeMs,
+  );
+  // SQL/JS parity at speed boundaries and after streak resets, with spoofed scores ignored.
+  const scoring = await newRoom();
+  const scoringCode = scoring.room.code;
+  const joinedScorer = await cmd(
+    "join",
+    { code: scoringCode, name: "Bonos", avatar: "rocket" },
+    "scorer",
+  );
+  await cmd("start", { code: scoringCode }, "", true);
+  const sequence = [
+    [true, 5000],
+    [true, 5001],
+    [true, 10000],
+    [true, 10001],
+    [true, 20000],
+    [true, 20001],
+    [false, 1000],
+    [true, 1000],
+    [true, 1000],
+    [true, 1000],
+    [true, 45000],
+    [true, 25000],
+  ];
+  let previousStreak = 0;
+  for (const [index, [correct, elapsedMs]] of sequence.entries()) {
+    const expected = scoreAward(correct, elapsedMs, previousStreak);
+    const { data: row, error: insertError } = await db
+      .from("rush_answers")
+      .insert({
+        player_id: joinedScorer.me.id,
+        question_index: index,
+        correct,
+        elapsed_ms: elapsedMs,
+        base_points: 100,
+        speed_bonus: 30,
+        streak_bonus: 20,
+        streak: 12,
+      })
+      .select()
+      .single();
+    assert.ifError(insertError);
+    assert.deepEqual(
+      [row.base_points, row.speed_bonus, row.streak_bonus, row.streak],
+      [
+        expected.basePoints,
+        expected.speedBonus,
+        expected.streakBonus,
+        expected.streak,
+      ],
+    );
+    previousStreak = expected.streak;
+  }
+  // The migration deliberately keeps existing rooms on the original scoring version.
+  const legacy = await newRoom();
+  const { error: legacyError } = await db
+    .from("rush_rooms")
+    .update({ scoring_version: 1 })
+    .eq("code", legacy.room.code);
+  assert.ifError(legacyError);
+  await cmd(
+    "join",
+    { code: legacy.room.code, name: "Original", avatar: "robot" },
+    "legacy",
+  );
+  await cmd("start", { code: legacy.room.code }, "", true);
+  for (let index = 0; index < 3; index++) {
+    const legacyReply = await cmd(
+      "answer",
+      { code: legacy.room.code, index, choice: questions[index].correctOption },
+      "legacy",
+    );
+    assert.equal(legacyReply.me.answer.points, 100);
+    assert.equal(legacyReply.me.answer.speedBonus, 0);
+    assert.equal(legacyReply.me.answer.streakBonus, 0);
+    await cmd("next", { code: legacy.room.code, index }, "legacy");
+  }
   // An unprivileged JWT cannot call privileged functions or read private tables.
   if (process.env.SUPABASE_ANON_KEY) {
     const anon = createClient(
@@ -181,7 +308,7 @@ try {
     assert(exposed.error || exposed.data.length === 0);
   }
   console.log(
-    "DB OK: 40 jugadores, capacidad, permisos, idempotencia, vencimientos, recarga, clasificación y cierre automático.",
+    "DB OK: 40 jugadores, capacidad, permisos, idempotencia, bonos, rachas, límites de rapidez, salas anteriores, tiempos de llegada y cierre automático.",
   );
 } finally {
   // Only delete this run's explicitly generated rooms, never reset the database.

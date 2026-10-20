@@ -65,6 +65,9 @@ export async function GET(request: NextRequest) {
         "Respondidas",
         "Puntos",
         "Tiempo de desempate (ms)",
+        "Bonos",
+        "Mejor racha",
+        "Tiempo de llegada (ms)",
       ],
       ...state.players.map((p) => [
         p.rank,
@@ -73,6 +76,9 @@ export async function GET(request: NextRequest) {
         p.answered,
         p.points,
         p.timeMs,
+        p.bonusPoints,
+        p.bestStreak,
+        p.finishTimeMs ?? "",
       ]),
     ];
     return new NextResponse(

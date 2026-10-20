@@ -460,7 +460,7 @@ export function HostPanel() {
                       ? "Pide al grupo que conserve la misma pestaña. Si recargan, recuperarán su paquete."
                       : status === "finished"
                         ? "Comenta las preguntas que costaron más trabajo y aprovecha las explicaciones para repasar."
-                        : "Las explicaciones se leen sin reloj. Los aciertos deciden la posición y el tiempo de respuesta desempata."}
+                        : "Las explicaciones se leen sin reloj. Los puntos deciden la posición y el tiempo de respuesta desempata."}
                   </p>
                 </div>
               </section>

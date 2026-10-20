@@ -1,6 +1,8 @@
 import type { GameState } from "@/lib/types";
 import { Mascot } from "./mascot";
 import { RacePodium } from "./race-podium";
+import { formatRaceTime } from "@/lib/rules.mjs";
+import { ClockIcon, FlameIcon } from "./game-icons";
 
 export function Leaderboard({
   state,
@@ -103,9 +105,16 @@ export function Leaderboard({
                       {player.name}
                       {mine === player.id && <span className="you"> tú</span>}
                     </strong>
-                    {player.complete && (
+                    {player.streak >= 3 && (
+                      <span className="streak-tag is-hot">
+                        <FlameIcon size={13} /> {player.streak}
+                      </span>
+                    )}
+                    {player.finishTimeMs != null && (
                       <span className="racer-complete">
-                        Completado <span aria-hidden="true">✓</span>
+                        <ClockIcon size={12} />{" "}
+                        {formatRaceTime(player.finishTimeMs)}{" "}
+                        <span aria-label="En meta">✓</span>
                       </span>
                     )}
                   </div>
@@ -113,20 +122,20 @@ export function Leaderboard({
                     <div
                       className="track"
                       role="progressbar"
-                      aria-label={`Aciertos de ${player.name}`}
+                      aria-label={`Preguntas respondidas por ${player.name}`}
                       aria-valuemin={0}
                       aria-valuemax={12}
-                      aria-valuenow={player.correct}
+                      aria-valuenow={player.answered}
                     >
                       <span
-                        style={{ width: `${(player.correct / 12) * 100}%` }}
+                        style={{ width: `${(player.answered / 12) * 100}%` }}
                       />
                     </div>
                     <span
                       className="packet-marker"
                       aria-hidden="true"
                       style={{
-                        left: `clamp(0px, calc(${(player.correct / 12) * 100}% - 16px), calc(100% - 32px))`,
+                        left: `clamp(0px, calc(${(player.answered / 12) * 100}% - 16px), calc(100% - 32px))`,
                       }}
                     >
                       <Mascot
@@ -140,7 +149,12 @@ export function Leaderboard({
                     <span>
                       <strong>{player.correct}</strong> aciertos
                     </span>
-                    <span>{player.answered}/12 respondidas</span>
+                    <span>
+                      {player.bonusPoints > 0
+                        ? `+${player.bonusPoints} en bonos · `
+                        : ""}
+                      {player.answered}/12 respondidas
+                    </span>
                   </div>
                 </div>
                 <strong className="points">
@@ -154,9 +168,11 @@ export function Leaderboard({
       )}
       {!waiting && (
         <p className="leaderboard-note">
-          {final
-            ? "Gana quien tiene más aciertos. El tiempo de respuesta desempata; cada pregunta pendiente cuenta como 45 segundos."
-            : "Cada acierto suma 100 puntos. El tiempo de respuesta solo se usa para desempatar."}
+          {state.room.scoringVersion === 1
+            ? "Cada acierto suma 100 puntos. El tiempo de respuesta desempata."
+            : "Gana el total de puntos: aciertos, rapidez y rachas. El tiempo de respuesta desempata."}{" "}
+          El tiempo de llegada incluye las pausas para leer y se muestra como
+          referencia.
         </p>
       )}
     </section>

@@ -131,8 +131,9 @@ test("dos participantes completan una carrera con QR, reloj, explicaciones y pod
         await expect(
           p.getByRole("heading", { name: "¡Bien entregado!" }),
         ).toBeVisible({ timeout: 15000 });
+        // The visible total includes bonuses; the final summary exposes accuracy separately.
         await expect(
-          p.getByText("1200", { exact: true }).first(),
+          p.getByText("12/12", { exact: true }).first(),
         ).toBeVisible();
       }),
     );

@@ -1,12 +1,40 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useGame } from "./use-game";
 import { Mascot } from "./mascot";
 import { Leaderboard } from "./leaderboard";
+import type { GameState } from "@/lib/types";
+import { speedPoints } from "@/lib/rules.mjs";
+import { AnswerReward, FinishDetails, PlayerScore } from "./player-score";
+import { ScoringGuide } from "./scoring-guide";
+import { BoltIcon } from "./game-icons";
 export function PlayerGame({ code }: { code: string }) {
-  const { state, error, busy, offset, act, refresh } = useGame(code);
+  const game = useGame(code);
+  return <PlayerExperience code={code} {...game} />;
+}
+export function PlayerExperience({
+  code,
+  state,
+  error,
+  busy,
+  offset,
+  act,
+  refresh,
+}: {
+  code: string;
+  state: GameState | null;
+  error: string;
+  busy: boolean;
+  offset: number;
+  act: (
+    action: string,
+    payload?: Record<string, unknown>,
+  ) => Promise<GameState | undefined>;
+  refresh: () => Promise<void>;
+}) {
   const [now, setNow] = useState(Date.now());
+  const feedbackRef = useRef<HTMLElement>(null);
   const [pending, setPending] = useState<{
     index: number;
     choice: string;
@@ -16,6 +44,15 @@ export function PlayerGame({ code }: { code: string }) {
     return () => clearInterval(timer);
   }, []);
   const me = state?.me;
+  useEffect(() => {
+    if (!me?.answer) return;
+    feedbackRef.current?.scrollIntoView({
+      block: "nearest",
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "instant"
+        : "smooth",
+    });
+  }, [me?.index, !!me?.answer]);
   useEffect(() => {
     try {
       const saved = JSON.parse(
@@ -40,6 +77,11 @@ export function PlayerGame({ code }: { code: string }) {
     await act("answer", value);
   }
   const racer = state?.players.find((p) => p.id === me?.id);
+  const legacy = state?.room.scoringVersion === 1;
+  const elapsed = me?.deadlineAt
+    ? Math.max(0, 45000 - (Date.parse(me.deadlineAt) - (now + offset)))
+    : 45000;
+  const availableSpeed = speedPoints(elapsed);
   const seconds = Math.max(
     0,
     Math.ceil(
@@ -112,11 +154,13 @@ export function PlayerGame({ code }: { code: string }) {
             <p>
               12 preguntas · 45 segundos por pregunta.
               <br />
-              Cada acierto suma 100 puntos.
+              Cada acierto suma 100 puntos
+              {legacy ? "." : " + bonos por rapidez y racha."}
               <br />
               Lee las explicaciones con calma: ese tiempo no cuenta.
             </p>
           </div>
+          <ScoringGuide legacy={legacy} />
         </section>
       ) : state.room.status === "finished" ? (
         <>
@@ -146,6 +190,7 @@ export function PlayerGame({ code }: { code: string }) {
                 <span>posición</span>
               </div>
             </div>
+            <FinishDetails racer={racer} />
           </section>
           <Leaderboard state={state} mine={me?.id} final />
           <Link href="/" className="btn outline full">
@@ -165,12 +210,14 @@ export function PlayerGame({ code }: { code: string }) {
             Tienes {racer?.correct} aciertos y {racer?.points} puntos. El resto
             del grupo sigue en carrera; el podio aparecerá al terminar.
           </p>
+          <FinishDetails racer={racer} />
           <div className="waiting-status">
             <span className="live-dot" /> Esperando al grupo
           </div>
         </section>
       ) : me?.question ? (
         <>
+          <PlayerScore racer={racer} legacy={legacy} />
           <div className="question-topline">
             <span className="eyebrow">SALTO {me.index + 1} DE 12</span>
             <span
@@ -183,6 +230,17 @@ export function PlayerGame({ code }: { code: string }) {
           <div className="track question-progress">
             <span style={{ width: `${(me.index / 12) * 100}%` }} />
           </div>
+          {!me.answer && !legacy && (
+            <div className="speed-opportunity">
+              <BoltIcon size={16} />
+              <strong>
+                {availableSpeed
+                  ? `Rapidez: +${availableSpeed} disponibles`
+                  : "Acierto: 100 puntos + tu racha"}
+              </strong>
+              <span>Solo si aciertas</span>
+            </div>
+          )}
           <section className="card question-card">
             <span className="topic">{me.question.topic}</span>
             <h1>{me.question.prompt}</h1>
@@ -210,16 +268,27 @@ export function PlayerGame({ code }: { code: string }) {
           </section>
           {me.answer ? (
             <section
+              ref={feedbackRef}
               className={`feedback ${me.answer.correct ? "success" : ""}`}
               aria-live="polite"
             >
               <h2>
                 {me.answer.correct
-                  ? "¡Ese paquete sí avanza! +100"
+                  ? me.answer.streak >= 3
+                    ? "¡Estás en racha!"
+                    : "¡Buen salto por la red!"
                   : me.answer.selected === null
                     ? "Se acabó el tiempo. Vamos a aprenderlo."
                     : "Un salto para aprender."}
               </h2>
+              {me.answer.correct ? (
+                <AnswerReward answer={me.answer} />
+              ) : (
+                <p className="feedback-reassurance">
+                  Tus puntos siguen contigo. El próximo acierto abre una nueva
+                  racha.
+                </p>
+              )}
               <p>{me.answer.explanation}</p>
               <button
                 className="btn primary full"
@@ -262,6 +331,7 @@ export function PlayerGame({ code }: { code: string }) {
               Elige una respuesta. Cada salto es una oportunidad de aprender.
             </p>
           )}
+          <ScoringGuide legacy={legacy} />
         </>
       ) : (
         <section className="card">

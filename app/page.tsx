@@ -62,7 +62,7 @@ export default async function Home({
         <div>
           <span className="step-number">3</span>
           <h3>Encuentra tu lugar</h3>
-          <p>Más aciertos, más puntos. La velocidad desempata.</p>
+          <p>Aciertos, rapidez y rachas. ¡Cada salto suma!</p>
         </div>
       </section>
     </main>

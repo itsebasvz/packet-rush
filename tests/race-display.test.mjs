@@ -9,17 +9,40 @@ const snapshot = (answered = [0, 0], status = "running", code = "ABC234") => ({
 test("40 racers fit one large projection or balanced smaller pages", () => {
   const large = raceLayout(1800, 740, 40);
   assert.equal(large.pageCount, 1);
-  assert.equal(large.rows, 10);
+  assert.equal(large.columns, 5);
+  assert.equal(large.rows, 8);
   const small = raceLayout(1200, 400, 40);
-  assert.equal(small.pageCount, 2);
-  assert.equal(small.pageSize, 20);
-  assert(small.rows * 64 + (small.rows - 1) * 8 <= 400);
+  assert.equal(small.pageCount, 3);
+  assert.equal(small.pageSize, 14);
+  assert(small.rows * 76 + (small.rows - 1) * 8 <= 400);
 });
 test("narrow layouts keep racers on readable pages", () => {
   const layout = raceLayout(335, 300, 40);
   assert.equal(layout.columns, 1);
-  assert.equal(layout.pageSize, 4);
-  assert.equal(layout.pageCount, 10);
+  assert.equal(layout.pageSize, 3);
+  assert.equal(layout.pageCount, 14);
+});
+test("rachas se anuncian solo al cruzar hitos nuevos, sin repetir por sondeo", () => {
+  const state = snapshot([2, 2]);
+  state.players[0].streak = 2;
+  state.players[1].streak = 2;
+  const initial = raceEvents(null, state);
+  const next = structuredClone(state);
+  next.players[0].streak = 3;
+  const event = raceEvents(initial.tracker, next);
+  assert.deepEqual(
+    event.hot.map((p) => p.id),
+    ["0"],
+  );
+  assert.equal(raceEvents(event.tracker, next).hot.length, 0);
+  next.players[0].streak = 0;
+  const reset = raceEvents(event.tracker, next);
+  next.players[0].streak = 3;
+  assert.equal(raceEvents(reset.tracker, next).hot.length, 1);
+  next.players[0].streak = 8;
+  assert.equal(raceEvents(event.tracker, next).hot.length, 1);
+  next.room.status = "finished";
+  assert.equal(raceEvents(event.tracker, next).hot.length, 0);
 });
 test("existing finishers are a baseline; subsequent arrivals fire once", () => {
   const initial = raceEvents(null, snapshot([12, 0]));

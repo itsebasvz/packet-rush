@@ -84,7 +84,20 @@ try {
   assert.equal(state.room.status, "finished");
   assert.equal(state.players.length, 40);
   assert(state.players.every((p) => p.answered === 12 && p.complete));
-  assert.equal(state.players.filter((p) => p.points === 1200).length, 32);
+  assert.equal(
+    state.players.filter(
+      (p) =>
+        p.correct === 12 &&
+        p.points >= 1200 &&
+        p.points <= 1745 &&
+        p.bestStreak === 12 &&
+        p.finishTimeMs !== null,
+    ).length,
+    32,
+  );
+  assert(
+    state.players.every((p) => p.points === p.correct * 100 + p.bonusPoints),
+  );
   const snapshots = await Promise.all(
     players.slice(0, 5).map((p) => p.request(`state?code=${code}`)),
   );

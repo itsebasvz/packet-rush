@@ -2277,6 +2277,55 @@ legend {
   z-index: 60;
   pointer-events: none;
 }
+.demo-badge {
+  position: fixed;
+  bottom: 12px;
+  left: 20px;
+  z-index: 70;
+  min-height: 48px;
+  padding: 8px 16px;
+  border: 2px solid var(--indigo);
+  border-radius: 12px;
+  background: var(--blue-light);
+  color: var(--indigo);
+  font-size: 11px;
+  font-weight: 800;
+}
+.demo-dialog {
+  width: min(480px, calc(100% - 32px));
+  max-height: calc(100svh - 32px);
+  margin: auto;
+  overflow-y: auto;
+  color: var(--ink);
+}
+.demo-dialog::backdrop {
+  background: #1f1f1f80;
+}
+.demo-dialog label {
+  display: block;
+  margin: 16px 0 8px;
+  font-weight: 800;
+  font-size: 13px;
+}
+.demo-dialog select {
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 12px;
+  border: 2px solid var(--mist);
+  border-radius: 12px;
+  background: var(--cloud);
+  color: var(--ink);
+  font: inherit;
+}
+.demo-dialog select:focus-visible {
+  outline: 3px solid var(--indigo);
+  outline-offset: 4px;
+}
+.demo-actions {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
 @media (min-width: 900px) {
   .is-projecting {
     overflow: hidden;
@@ -2323,4 +2372,427 @@ legend {
   .fireworks-canvas {
     display: none;
   }
+}
+
+/* Scoring: a quiet HUD while thinking, a clear reward after answering. */
+.score-label {
+  display: block;
+  color: var(--graphite);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+.player-score {
+  border: 2px solid var(--mist);
+  border-radius: 16px;
+  background: white;
+  overflow: hidden;
+}
+.player-score-hot {
+  border-color: var(--indigo);
+}
+.player-score-total {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+}
+.player-score-avatar {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--blue-light);
+  flex-shrink: 0;
+}
+.player-score-total > div > strong {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: 32px;
+  line-height: 1.1;
+  color: var(--indigo);
+}
+.player-score-total strong small {
+  font: 800 10px var(--font-body);
+  color: var(--graphite);
+}
+.score-earned-bonus {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  color: var(--indigo);
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.player-streak-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--mist);
+  background: var(--cloud);
+}
+.streak-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--graphite);
+  font-size: 11px;
+  line-height: 1.2;
+  white-space: nowrap;
+  font-weight: 800;
+}
+.streak-tag.is-hot {
+  background: var(--yellow);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 4px 8px;
+  animation: score-pop 0.4s ease both;
+}
+.streak-tag svg {
+  flex-shrink: 0;
+}
+.streak-dots {
+  display: flex;
+  gap: 3px;
+  margin-left: auto;
+}
+.streak-dots span {
+  width: 7px;
+  height: 14px;
+  border-radius: 4px;
+  background: var(--mist);
+}
+.streak-dots .filled {
+  background: var(--indigo);
+}
+.streak-next {
+  color: var(--graphite);
+  font-size: 9px;
+}
+.speed-opportunity {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--indigo);
+  font-size: 11px;
+  margin-top: -12px;
+  margin-bottom: -12px;
+}
+.speed-opportunity > span {
+  margin-left: auto;
+  color: var(--graphite);
+  font-size: 10px;
+}
+.answer-reward {
+  padding: 16px;
+  border: 2px solid white;
+  border-radius: 14px;
+  background: white;
+  animation: reward-enter 0.4s ease both;
+}
+.answer-reward.reward-hot {
+  border-color: var(--yellow);
+}
+.answer-reward-heading,
+.answer-reward-total {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.answer-reward-heading > span:last-child {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--graphite);
+  font-variant-numeric: tabular-nums;
+}
+.answer-reward-total {
+  margin: 8px 0 16px;
+}
+.answer-reward-total > strong {
+  font: 800 48px/1 var(--font-display);
+  color: var(--indigo);
+  letter-spacing: -0.03em;
+}
+.answer-reward-total > span:not(.streak-tag) {
+  color: var(--graphite);
+  font-size: 12px;
+  align-self: flex-end;
+  padding-bottom: 4px;
+}
+.answer-reward-total > .streak-tag {
+  margin-left: auto;
+  font-size: 10px;
+}
+.answer-reward-parts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.answer-reward-parts > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 10px;
+  background: var(--cloud);
+  color: var(--graphite);
+}
+.answer-reward-parts > .earned {
+  color: var(--indigo);
+  background: var(--blue-light);
+}
+.answer-reward-parts span {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+}
+.answer-reward-parts strong {
+  font-size: 17px;
+  font-weight: 800;
+}
+.feedback-reassurance {
+  color: var(--graphite);
+  font-size: 12px;
+}
+.scoring-guide {
+  border: 1px solid var(--mist);
+  border-radius: 12px;
+  background: white;
+  text-align: left;
+  margin-top: 4px;
+}
+.scoring-guide summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 12px 16px;
+  color: var(--indigo);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  list-style: none;
+}
+.scoring-guide summary::-webkit-details-marker {
+  display: none;
+}
+.scoring-guide summary:focus-visible {
+  outline: 3px solid var(--indigo);
+  border-radius: 12px;
+}
+.scoring-guide[open] summary > span {
+  transform: rotate(45deg);
+}
+.scoring-guide-body {
+  padding: 0 16px 16px;
+  color: var(--graphite);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.scoring-guide-body p:last-child {
+  margin-bottom: 0;
+}
+.scoring-rule {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.scoring-rule > svg {
+  flex-shrink: 0;
+  color: var(--indigo);
+  margin-top: 2px;
+}
+.scoring-rule strong {
+  color: var(--ink);
+}
+.scoring-rule p {
+  margin: 2px 0 0;
+}
+.finish-details {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 24px 0;
+  width: 100%;
+}
+.finish-details > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 4px;
+  background: var(--blue-light);
+  border-radius: 12px;
+  color: var(--indigo);
+  min-width: 0;
+}
+.finish-details strong {
+  font: 800 28px/1.1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+.finish-details span {
+  font-size: 10px;
+  color: var(--graphite);
+  line-height: 1.4;
+}
+.podium-person > span:not(.podium-placeholder) {
+  font-size: 10px;
+  color: var(--graphite);
+}
+.podium-arrival {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-variant-numeric: tabular-nums;
+}
+.arena-lane-caption {
+  align-items: center;
+  min-height: 18px;
+}
+.arena-lane-caption .streak-tag {
+  font-size: 9px;
+  padding: 2px 5px;
+}
+.arena-arrival-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.arena-arrival-time.has-arrived {
+  color: var(--success);
+  font-weight: 800;
+}
+.arena-hot {
+  border-color: var(--indigo);
+}
+.arena-hot .arena-position {
+  background: var(--indigo);
+  color: white;
+}
+.arena-winner.arena-hot {
+  border-color: var(--yellow);
+}
+.arena-winner.arena-hot .arena-position {
+  color: var(--ink);
+  background: var(--yellow);
+}
+.race-screen-compact .arena-lane {
+  padding: 4px 8px;
+}
+.race-screen-compact .arena-lane-caption {
+  display: flex;
+  font-size: 9px;
+}
+.race-screen-compact .arena-inline-progress {
+  display: none;
+}
+.race-screen-compact .arena-route {
+  height: 26px;
+  min-height: 26px;
+}
+.race-screen-compact .arena-route-runner {
+  top: -3px;
+}
+.race-screen-compact .arena-route-track {
+  top: 10px;
+}
+.race-screen-compact .arena-finish {
+  top: -1px;
+}
+.race-screen-stage .pill {
+  gap: 4px;
+}
+.score-pop {
+  display: inline-block;
+  animation: score-pop 0.35s ease both;
+  font-variant-numeric: tabular-nums;
+}
+@keyframes score-pop {
+  0% {
+    transform: scale(0.91);
+  }
+  60% {
+    transform: scale(1.07);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes reward-enter {
+  from {
+    transform: translateY(8px);
+    opacity: 0.3;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@media (max-width: 374px) {
+  .streak-next {
+    display: none;
+  }
+  .player-score-total {
+    padding: 12px;
+    gap: 8px;
+  }
+  .score-earned-bonus {
+    font-size: 10px;
+  }
+  .answer-reward {
+    padding: 12px;
+  }
+}
+.demo-player-tools {
+  position: fixed;
+  left: 16px;
+  bottom: 72px;
+  width: min(380px, calc(100% - 32px));
+  max-height: calc(100svh - 96px);
+  overflow-y: auto;
+  z-index: 70;
+  border-color: var(--indigo);
+  display: grid;
+  gap: 12px;
+}
+.demo-player-tools p {
+  margin: 0;
+}
+.demo-player-tools .text-link {
+  padding: 4px;
+}
+.arena-correct {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+.arena-bonus {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  color: var(--indigo);
+  font-weight: 800;
+}
+.arena-correct-check {
+  display: none;
+}
+.race-screen-compact .arena-correct-label {
+  display: none;
+}
+.race-screen-compact .arena-correct-check {
+  display: inline;
 }

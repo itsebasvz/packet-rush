@@ -12,6 +12,11 @@ export type Answer = {
   explanation: string;
   selected: string | null;
   elapsedMs: number;
+  basePoints: number;
+  speedBonus: number;
+  streakBonus: number;
+  streak: number;
+  points: number;
 };
 export type Racer = {
   id: string;
@@ -24,6 +29,10 @@ export type Racer = {
   timeMs: number;
   rank: number;
   complete: boolean;
+  streak: number;
+  bestStreak: number;
+  bonusPoints: number;
+  finishTimeMs: number | null;
 };
 export type GameState = {
   serverNow: string;
@@ -32,6 +41,7 @@ export type GameState = {
     status: "waiting" | "running" | "finished";
     questionCount: number;
     capacity: number;
+    scoringVersion: number;
   };
   players: Racer[];
   me: {

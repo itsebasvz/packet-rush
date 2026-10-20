@@ -13,7 +13,7 @@ Una carrera de preguntas para **Redes de Computadoras 1**, diseñada para hasta 
 5. Al completar todos el recorrido aparece el podio. También puedes terminar anticipadamente.
 6. Descarga los resultados como CSV o crea otra carrera.
 
-Al dar la salida, el panel cambia automáticamente a una vista de proyección que aprovecha toda la ventana. **Pantalla completa** amplía la carrera y **Controles** permite terminarla o descargar resultados. Las pistas muestran preguntas respondidas; las posiciones siguen dependiendo de los aciertos y el desempate por tiempo. El podio es provisional hasta cerrar la partida. Cada nueva llegada activa una celebración con fuegos artificiales y podio animado; se respeta la preferencia de movimiento reducido. Si el grupo no cabe con buena legibilidad, las páginas cambian cada diez segundos y pueden pausarse o recorrerse manualmente.
+Al dar la salida, el panel cambia automáticamente a una vista de proyección que aprovecha toda la ventana. **Pantalla completa** amplía la carrera y **Controles** permite terminarla o descargar resultados. Las pistas muestran preguntas respondidas; las posiciones dependen de los puntos totales y el desempate por tiempo de respuesta. El podio es provisional hasta cerrar la partida. Cada nueva llegada activa una celebración con fuegos artificiales y podio animado; se respeta la preferencia de movimiento reducido. Las rachas se destacan en cada pista y se anuncian al alcanzar 3, 5, 8 y 12 aciertos seguidos. Si el grupo no cabe con buena legibilidad, las páginas cambian cada diez segundos y pueden pausarse o recorrerse manualmente.
 
 La inscripción se cierra al iniciar. Cada sala admite 40 participantes y vence a las 24 horas. Si alguien recarga, recupera su partida en el mismo navegador. Cambiar de dispositivo o borrar cookies no transfiere la sesión. Se necesita internet durante la actividad.
 
@@ -24,10 +24,14 @@ La entrada desde el celular tiene dos pasos: sala y apodo, después compañero y
 - 12 preguntas, cuatro por tema: modelo OSI, dispositivos y topologías.
 - Cuatro opciones, un intento y 45 segundos por pregunta. La primera pregunta comienza con la salida común.
 - Cada acierto suma 100 puntos; los errores y vencimientos suman cero.
+- Solo una respuesta correcta puede obtener un bono de rapidez: hasta 5 segundos, +30; hasta 10, +20; hasta 20, +10. Después de 20 segundos conserva los 100 puntos base.
+- A partir de tres aciertos seguidos, cada nuevo acierto también recibe un bono de racha: 3 seguidos, +10; 4, +15; 5 o más, +20. Un error o vencimiento reinicia la racha sin quitar puntos acumulados. El máximo por respuesta es 150 puntos y por carrera perfecta de 12 preguntas es 1745.
 - Leer la explicación no cuenta en el tiempo de desempate. La siguiente pregunta empieza al pulsar **Continuar**.
-- Gana quien tiene más aciertos; el menor tiempo acumulado de respuesta desempata. Un empate exacto comparte posición.
+- Gana el total de puntos (base + rapidez + racha); el menor tiempo acumulado de respuesta desempata. Un empate exacto comparte posición. El servidor calcula y persiste todos los bonos, por lo que recargar o reenviar una respuesta no vuelve a sumarlos.
 - Al calcular posiciones, cada pregunta pendiente o vencida cuenta como 45 segundos. El tiempo total mostrado para desempate incluye esa penalización.
 - Si se cierra anticipadamente, las preguntas pendientes quedan sin puntos.
+- El tiempo de llegada va desde la salida común hasta la última respuesta, incluye las pausas para leer y queda fijo al terminar las 12 preguntas. Se muestra como referencia y no decide bonos ni desempates; los recorridos incompletos no tienen tiempo de llegada. Los CSV incluyen llegada, mejor racha y bonos.
+- Las salas creadas antes de la migración de bonos conservan la regla original de 100 puntos por acierto, sin bonos retroactivos.
 
 ## Stack y arquitectura
 
@@ -48,6 +52,8 @@ pnpm install --frozen-lockfile
 cp .env.example .env.local
 pnpm dev
 ```
+
+En desarrollo, `/demo` simula 32 participantes (se pueden elegir entre 2 y 40), rachas, bonos y llegadas en vivo sin usar la base de datos. `/demo/player` muestra la misma interfaz del jugador con preguntas y controles para probar respuestas rápidas, lentas o incorrectas. Ambas rutas están deshabilitadas en producción. Cada demo se ejecuta de forma independiente en el navegador.
 
 Completa `.env.local` con la URL y clave secreta de un proyecto dedicado de Supabase, además de dos valores aleatorios distintos para `HOST_PASSWORD` y `HOST_SESSION_SECRET`. Puedes generar cada uno con `openssl rand -hex 32`. Nunca uses el prefijo `NEXT_PUBLIC_` para estas variables ni subas los valores a GitHub.
 

@@ -1,5 +1,7 @@
 import type { Racer } from "@/lib/types";
 import { Mascot } from "./mascot";
+import { formatRaceTime } from "@/lib/rules.mjs";
+import { ClockIcon } from "./game-icons";
 
 export function RacePodium({
   players,
@@ -47,6 +49,12 @@ export function RacePodium({
                     <span>
                       {leader.points} pts{group.length > 1 ? " · empate" : ""}
                     </span>
+                    {group.length === 1 && leader.finishTimeMs != null && (
+                      <span className="podium-arrival">
+                        <ClockIcon size={11} />
+                        {formatRaceTime(leader.finishTimeMs)}
+                      </span>
+                    )}
                   </>
                 ) : (
                   <>
