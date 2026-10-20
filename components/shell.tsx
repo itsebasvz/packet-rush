@@ -20,8 +20,8 @@ export function Header() {
 export function Footer() {
   return (
     <footer className="site-footer">
-      Hecho para aprender jugando <span aria-hidden="true">✦</span> Redes de
-      Computadoras 1
+      Sebastián Vázquez <span aria-hidden="true">✦</span> Redes de Computadoras
+      1
     </footer>
   );
 }

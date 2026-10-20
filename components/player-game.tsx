@@ -257,9 +257,6 @@ export function PlayerGame({ code }: { code: string }) {
           </Link>
         </section>
       )}
-      {state.room.status !== "finished" && (
-        <Leaderboard state={state} mine={me?.id} />
-      )}
     </main>
   );
 }

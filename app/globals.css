@@ -676,27 +676,66 @@ legend {
   line-height: 1.8;
 }
 .leaderboard {
-  padding: 18px;
+  padding: 20px;
+  overflow: hidden;
 }
-.leaderboard .section-title h2 {
-  font-size: 22px;
+.leaderboard-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-bottom: 24px;
 }
-.racers {
+.leaderboard-heading .eyebrow {
+  margin-bottom: 8px;
+  font-size: 10px;
+}
+.leaderboard-heading h2 {
+  font-size: 26px;
+  margin-bottom: 8px;
+}
+.leaderboard-heading p {
+  font-size: 13px;
+  margin: 0;
+  line-height: 1.5;
+}
+.leaderboard-heading .pill {
+  flex-shrink: 0;
+}
+.race-columns {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 48px;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 2px solid var(--mist);
+  border-bottom: 1px solid var(--mist);
+  color: var(--graphite);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  font-weight: 800;
+}
+.race-columns > :last-child {
+  text-align: right;
+}
+.racers,
+.waiting-roster {
   list-style: none;
   margin: 0;
   padding: 0;
-  max-height: 620px;
-  overflow: auto;
+  max-height: 640px;
+  overflow-y: auto;
 }
 .racer {
-  display: flex;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 48px;
+  gap: 12px;
   align-items: center;
-  padding: 14px 4px;
+  padding: 20px 0;
   border-bottom: 1px solid var(--mist);
 }
 .racer:last-child {
-  border: 0;
+  border-bottom: 0;
 }
 .racer.mine {
   background: var(--blue-light);
@@ -705,41 +744,135 @@ legend {
   padding-right: 8px;
 }
 .rank {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 32px;
+  border-radius: 10px;
+  color: var(--indigo);
+  background: var(--blue-light);
   font-weight: 800;
-  min-width: 20px;
-  text-align: center;
   font-size: 13px;
-  color: var(--graphite);
+}
+.racer-winner .rank {
+  background: var(--yellow);
+  color: var(--ink);
 }
 .racer-details {
-  flex: 1;
   min-width: 0;
 }
-.racer-details strong {
-  font-size: 13px;
+.racer-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+}
+.racer-heading > strong {
+  font-size: 15px;
+  font-weight: 800;
   overflow-wrap: anywhere;
 }
-.racer-details .track {
-  margin: 5px 0;
-}
-.racer-details small {
+.racer-complete {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--mint);
+  color: var(--ink);
   font-size: 10px;
+  font-weight: 800;
+}
+.racer-meta {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-size: 11px;
+  line-height: 1.5;
   color: var(--graphite);
+}
+.racer-meta strong {
+  color: var(--ink);
 }
 .you {
   color: var(--indigo);
-  font-size: 11px;
+  font-size: 12px;
 }
 .points {
-  font-size: 17px;
+  font-family: var(--font-display);
+  font-size: 24px;
   color: var(--indigo);
   text-align: right;
+  line-height: 1.2;
 }
 .points small {
   display: block;
-  font-size: 9px;
+  font: 800 9px/1.5 var(--font-body);
   color: var(--graphite);
   letter-spacing: 0.08em;
+  margin-top: 4px;
+}
+.leaderboard-note {
+  border-top: 2px solid var(--mist);
+  padding-top: 16px;
+  margin: 8px 0 0;
+  color: var(--graphite);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.waiting-roster {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+.waiting-roster li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--mist);
+  border-radius: 12px;
+}
+.waiting-roster li > strong {
+  font-size: 14px;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.roster-avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  background: var(--blue-light);
+  border-radius: 12px;
+}
+.roster-joined {
+  font-size: 11px;
+  color: var(--graphite);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.roster-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 32px 12px;
+  border: 2px dashed var(--mist);
+  border-radius: 12px;
+  gap: 16px;
+}
+.roster-empty h3,
+.roster-empty p {
+  margin: 0;
+}
+.roster-empty p {
+  font-size: 13px;
+  line-height: 1.7;
 }
 .result-stats {
   display: flex;
@@ -797,6 +930,42 @@ legend {
 .celebrate {
   animation: float 3s ease-in-out infinite;
 }
+.host-login-layout {
+  padding-top: 48px;
+}
+.host-login-card {
+  padding: 24px;
+}
+.login-mascot {
+  display: grid;
+  place-items: center;
+  width: 104px;
+  height: 104px;
+  border-radius: 24px;
+  background: var(--blue-light);
+  margin-bottom: 24px;
+}
+.host-login-card .eyebrow {
+  margin-bottom: 12px;
+}
+.host-login-card h1 {
+  margin-bottom: 12px;
+}
+.host-login-card > .muted {
+  margin-bottom: 28px;
+}
+.host-login-form {
+  display: grid;
+  gap: 24px;
+}
+.form-field {
+  display: grid;
+  gap: 8px;
+}
+.host-login-form label,
+.host-login-form .notice {
+  margin: 0;
+}
 .host-layout {
   max-width: 1140px;
   margin: auto;
@@ -804,64 +973,310 @@ legend {
 }
 .host-title {
   display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
+  gap: 16px;
   margin-bottom: 28px;
 }
+.host-title .eyebrow {
+  margin-bottom: 12px;
+}
 .host-title h1 {
-  font-size: 32px;
+  font-size: 30px;
+  margin-bottom: 12px;
+}
+.host-title .btn {
+  flex-shrink: 0;
+  padding-left: 16px;
+  padding-right: 16px;
 }
 .host-title p {
   margin: 0;
+  font-size: 14px;
+  max-width: 460px;
+}
+.host-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.host-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 12px;
+  border: 2px solid var(--mist);
+  border-radius: 16px;
+  background: white;
+  min-width: 0;
+}
+.stat-label {
+  color: var(--graphite);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  min-height: 28px;
+}
+.host-stat > strong {
+  color: var(--indigo);
+  font-family: var(--font-display);
+  font-size: 32px;
+  line-height: 1;
+}
+.host-stat strong small {
+  color: var(--graphite);
+  font: 700 12px/1.2 var(--font-body);
+  margin-left: 4px;
+}
+.stat-caption {
+  font-size: 10px;
+  color: var(--graphite);
+  line-height: 1.5;
+}
+.host-stat .track {
+  margin-top: auto;
+  height: 6px;
+}
+.host-grid.awaiting-group {
+  grid-template-areas: "invite" "controls" "main";
 }
 .host-grid {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "controls" "main" "invite";
   gap: 24px;
+  align-items: start;
+}
+.host-controls {
+  grid-area: controls;
+  padding: 24px;
+}
+.host-controls h2 {
+  font-size: 24px;
+  margin: 16px 0 12px;
+}
+.host-controls > p {
+  font-size: 13px;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+.room-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--indigo);
+  font-size: 11px;
+  font-weight: 800;
+  background: var(--blue-light);
+  border-radius: 999px;
+  padding: 8px 12px;
+}
+.room-status.is-finished {
+  background: var(--mint);
+  color: var(--ink);
+}
+.room-status.is-finished .live-dot {
+  background: var(--success);
+}
+.control-hint {
+  font-size: 11px !important;
+  color: var(--graphite);
+  text-align: center;
+  margin: 12px 0 0 !important;
+}
+.room-settings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  border-top: 1px solid var(--mist);
+  padding-top: 16px;
+  margin-top: 24px;
+  font-size: 11px;
+  color: var(--graphite);
+}
+.room-settings strong {
+  font-size: 14px;
+  color: var(--ink);
+  margin-right: 4px;
+}
+.host-action-stack {
+  display: grid;
+  gap: 12px;
+}
+.close-confirmation {
+  display: grid;
+  gap: 12px;
+  background: var(--blue-light);
+  border-radius: 12px;
+  padding: 16px;
+}
+.close-confirmation > strong {
+  font-size: 14px;
+}
+.close-confirmation > p {
+  margin: 0 0 4px;
+  font-size: 12px;
+  line-height: 1.7;
 }
 .room-card {
+  grid-area: invite;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
-  align-self: start;
+  gap: 16px;
+  padding: 24px;
+  min-width: 0;
 }
-.room-card .eyebrow {
+.room-invite-heading .eyebrow {
+  justify-content: center;
+  margin: 0 0 8px;
+  font-size: 10px;
+}
+.room-invite-heading h2 {
+  font-size: 22px;
   margin: 0;
 }
 .room-code {
   font-family: var(--font-display);
-  font-size: 48px;
+  font-weight: 800;
+  font-size: 42px;
   letter-spacing: 0.08em;
+  line-height: 1.2;
   color: var(--indigo);
   margin: 0;
 }
 .qr {
-  width: min(100%, 240px);
+  display: block;
+  width: min(100%, 192px);
   height: auto;
-  border-radius: 12px;
-}
-.room-url {
-  font-size: 12px;
-  color: var(--indigo);
-  overflow-wrap: anywhere;
-  max-width: 100%;
 }
 .room-card p {
   margin: 0;
 }
-.host-tips {
-  margin-top: 24px;
+.room-url {
+  color: var(--indigo);
+  font-size: 12px;
+  font-weight: 800;
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
 }
-.host-tips p:last-child {
-  margin-bottom: 0;
+.room-expiry {
+  font-size: 11px;
+  color: var(--graphite);
+  border-top: 1px solid var(--mist);
+  padding-top: 16px;
+  width: 100%;
+}
+.host-main {
+  grid-area: main;
+  min-width: 0;
+}
+.host-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 24px 4px;
+}
+.tip-symbol {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  background: var(--blue-light);
+  border-radius: 10px;
+  color: var(--indigo);
+}
+.host-tip strong {
+  font-size: 13px;
+}
+.host-tip p {
+  font-size: 12px;
+  color: var(--graphite);
+  margin: 6px 0 0;
+  line-height: 1.7;
 }
 .empty-host {
-  padding: 48px 20px;
+  padding: 40px 24px;
 }
-.host-layout > .notice {
-  margin-bottom: 20px;
+.empty-host .eyebrow {
+  justify-content: center;
+}
+.empty-host .muted {
+  font-size: 14px;
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+.host-notice {
+  margin-bottom: 24px;
+}
+@media (min-width: 768px) {
+  .host-login-card {
+    padding: 32px;
+  }
+  .host-layout {
+    padding: 40px 24px;
+  }
+  .host-title h1 {
+    font-size: 40px;
+  }
+  .host-title p {
+    max-width: none;
+  }
+  .host-overview {
+    gap: 16px;
+  }
+  .host-stat {
+    padding: 20px 24px;
+  }
+  .stat-label {
+    font-size: 10px;
+    min-height: 0;
+  }
+  .host-stat > strong {
+    font-size: 40px;
+  }
+  .stat-caption {
+    font-size: 12px;
+  }
+  .leaderboard {
+    padding: 24px;
+  }
+  .leaderboard-heading h2 {
+    font-size: 30px;
+  }
+  .race-columns,
+  .racer {
+    grid-template-columns: 36px minmax(0, 1fr) 64px;
+    gap: 16px;
+  }
+  .rank {
+    width: 36px;
+    height: 36px;
+  }
+  .racer-heading > strong {
+    font-size: 16px;
+  }
+  .racer-meta {
+    font-size: 12px;
+  }
+  .points {
+    font-size: 28px;
+  }
+}
+@media (min-width: 960px) {
+  .host-grid.awaiting-group {
+    grid-template-areas: "invite main" "controls main";
+  }
+  .host-grid {
+    grid-template-columns: 320px minmax(0, 1fr);
+    grid-template-areas: "controls main" "invite main";
+    grid-template-rows: auto 1fr;
+  }
 }
 .skip-link {
   position: absolute;
@@ -923,31 +1338,6 @@ legend {
     grid-template-columns: repeat(3, 1fr);
     gap: 32px;
   }
-  .host-layout {
-    padding: 48px 24px;
-  }
-  .host-title h1 {
-    font-size: 42px;
-  }
-  .host-grid {
-    grid-template-columns: 340px 1fr;
-  }
-  .host-grid .leaderboard {
-    padding: 24px;
-  }
-  .racer {
-    gap: 12px;
-  }
-  .host-grid .racer-details strong {
-    font-size: 15px;
-  }
-  .host-grid .racer-details small {
-    font-size: 12px;
-  }
-  .host-grid .racer {
-    padding-top: 18px;
-    padding-bottom: 18px;
-  }
 }
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -974,16 +1364,16 @@ legend {
 }
 .race-lane {
   position: relative;
-  height: 30px;
+  height: 44px;
 }
 .race-lane .track {
   position: absolute;
-  inset: 9px 0 auto;
+  inset: 19px 0 auto;
 }
 .packet-marker {
   position: absolute;
-  top: 0;
-  width: 24px;
-  height: 24px;
+  top: 6px;
+  width: 32px;
+  height: 32px;
   transition: left 0.6s ease;
 }

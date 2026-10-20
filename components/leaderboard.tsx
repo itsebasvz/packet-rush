@@ -1,5 +1,6 @@
 import type { GameState } from "@/lib/types";
 import { Mascot } from "./mascot";
+
 export function Leaderboard({
   state,
   mine,
@@ -9,75 +10,164 @@ export function Leaderboard({
   mine?: string;
   final?: boolean;
 }) {
+  const waiting = state.room.status === "waiting";
   return (
     <section
-      className="card leaderboard"
-      aria-label={final ? "Resultados finales" : "Posiciones de la carrera"}
+      className={`card leaderboard ${waiting ? "is-waiting" : ""}`}
+      aria-label={
+        final
+          ? "Resultados finales"
+          : waiting
+            ? "Participantes de la sala"
+            : "Posiciones de la carrera"
+      }
     >
-      <div className="section-title">
-        <h2>{final ? "La clasificación" : "Así va la carrera"}</h2>
-        <span className="pill">{state.players.length} paquetes</span>
-      </div>
+      <header className="leaderboard-heading">
+        <div>
+          <span className="eyebrow">
+            {final
+              ? "EL PODIO DEL GRUPO"
+              : waiting
+                ? "LISTA DE PARTICIPANTES"
+                : "EN VIVO"}
+          </span>
+          <h2>
+            {final
+              ? "Resultados de la carrera"
+              : waiting
+                ? "Tu grupo está llegando"
+                : "Así va la carrera"}
+          </h2>
+          <p className="muted">
+            {final
+              ? "Cada acierto fue un salto hacia adelante."
+              : waiting
+                ? "Revisa que todos estén aquí antes de dar la salida."
+                : "Sigue sus paquetes y celebra cada acierto."}
+          </p>
+        </div>
+        <span className="pill">
+          {state.players.length}{" "}
+          {state.players.length === 1 ? "participante" : "participantes"}
+        </span>
+      </header>
       {final && state.players.length > 0 && (
         <div className="podium">
           {state.players
-            .filter((p) => p.rank <= 3)
-            .map((p) => (
-              <div className={`podium-place place-${p.rank}`} key={p.id}>
-                <span className="medal">{p.rank === 1 ? "★" : p.rank}</span>
-                <Mascot avatar={p.avatar} size={64} celebrate={p.rank === 1} />
-                <strong>{p.name}</strong>
-                <span>{p.points} pts</span>
+            .filter((player) => player.rank <= 3)
+            .map((player) => (
+              <div
+                className={`podium-place place-${player.rank}`}
+                key={player.id}
+              >
+                <span className="medal">
+                  {player.rank === 1 ? "★" : player.rank}
+                </span>
+                <Mascot
+                  avatar={player.avatar}
+                  size={64}
+                  celebrate={player.rank === 1}
+                />
+                <strong>{player.name}</strong>
+                <span>{player.points} pts</span>
               </div>
             ))}
         </div>
       )}
-      <ol className="racers">
-        {state.players.map((p) => (
-          <li key={p.id} className={mine === p.id ? "racer mine" : "racer"}>
-            <span className="rank">{p.rank}</span>
-            <Mascot avatar={p.avatar} size={38} />
-            <div className="racer-details">
-              <strong>
-                {p.name}
-                {mine === p.id && <span className="you"> tú</span>}
-              </strong>
-              <div className="race-lane">
-                <div
-                  className="track"
-                  role="progressbar"
-                  aria-label={`Aciertos de ${p.name}`}
-                  aria-valuemin={0}
-                  aria-valuemax={12}
-                  aria-valuenow={p.correct}
-                >
-                  <span style={{ width: `${(p.correct / 12) * 100}%` }} />
-                </div>
-                <span
-                  className="packet-marker"
-                  aria-hidden="true"
-                  style={{
-                    left: `clamp(0px, calc(${(p.correct / 12) * 100}% - 12px), calc(100% - 24px))`,
-                  }}
-                >
-                  <Mascot avatar={p.avatar} size={24} />
+      {!state.players.length ? (
+        <div className="roster-empty">
+          <Mascot avatar="packet" size={88} />
+          <h3>El primer paquete está por llegar.</h3>
+          <p className="muted">
+            Comparte el QR o el enlace de la sala.
+            <br />
+            Los participantes aparecerán aquí.
+          </p>
+        </div>
+      ) : waiting ? (
+        <ul className="waiting-roster">
+          {state.players.map((player) => (
+            <li key={player.id}>
+              <span className="roster-avatar">
+                <Mascot avatar={player.avatar} size={42} />
+              </span>
+              <strong>{player.name}</strong>
+              <span className="roster-joined">En la sala</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <>
+          <div className="race-columns" aria-hidden="true">
+            <span>POS.</span>
+            <span>PARTICIPANTE Y RECORRIDO</span>
+            <span>PUNTOS</span>
+          </div>
+          <ol className="racers">
+            {state.players.map((player) => (
+              <li
+                key={player.id}
+                className={`racer ${mine === player.id ? "mine" : ""} ${final && player.rank === 1 ? "racer-winner" : ""}`}
+              >
+                <span className="rank" aria-label={`Posición ${player.rank}`}>
+                  {player.rank}
                 </span>
-              </div>
-              <small>
-                {p.correct}/12 aciertos · {p.answered}/12 respondidas
-              </small>
-            </div>
-            <strong className="points">
-              {p.points}
-              <small>PTS</small>
-            </strong>
-          </li>
-        ))}
-      </ol>
-      {final && (
-        <p className="muted small">
-          Gana quien tiene más aciertos. Desempate: menor tiempo al responder.
-          Las preguntas pendientes cuentan como 45 s.
+                <div className="racer-details">
+                  <div className="racer-heading">
+                    <strong>
+                      {player.name}
+                      {mine === player.id && <span className="you"> tú</span>}
+                    </strong>
+                    {player.complete && (
+                      <span className="racer-complete">
+                        Completado <span aria-hidden="true">✓</span>
+                      </span>
+                    )}
+                  </div>
+                  <div className="race-lane">
+                    <div
+                      className="track"
+                      role="progressbar"
+                      aria-label={`Aciertos de ${player.name}`}
+                      aria-valuemin={0}
+                      aria-valuemax={12}
+                      aria-valuenow={player.correct}
+                    >
+                      <span
+                        style={{ width: `${(player.correct / 12) * 100}%` }}
+                      />
+                    </div>
+                    <span
+                      className="packet-marker"
+                      aria-hidden="true"
+                      style={{
+                        left: `clamp(0px, calc(${(player.correct / 12) * 100}% - 16px), calc(100% - 32px))`,
+                      }}
+                    >
+                      <Mascot avatar={player.avatar} size={32} />
+                    </span>
+                  </div>
+                  <div className="racer-meta">
+                    <span>
+                      <strong>{player.correct}</strong> aciertos
+                    </span>
+                    <span>{player.answered}/12 respondidas</span>
+                  </div>
+                </div>
+                <strong className="points">
+                  {player.points}
+                  <small>PTS</small>
+                </strong>
+              </li>
+            ))}
+          </ol>
+        </>
+      )}
+      {!waiting && (
+        <p className="leaderboard-note">
+          {final
+            ? "Gana quien tiene más aciertos. El tiempo de respuesta desempata; cada pregunta pendiente cuenta como 45 segundos."
+            : "Cada acierto suma 100 puntos. El tiempo de respuesta solo se usa para desempatar."}
         </p>
       )}
     </section>
