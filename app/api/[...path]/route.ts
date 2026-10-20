@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomInt } from "node:crypto";
 import { csvCell, validateName } from "@/lib/rules.mjs";
+import { isAvatar, isAvatarColor } from "@/lib/appearance";
 import {
   command,
   configured,
@@ -195,11 +196,13 @@ export async function POST(request: NextRequest) {
       } catch (error) {
         return json({ error: (error as Error).message }, 400);
       }
-      if (
-        !["packet", "robot", "rocket", "computer"].includes(String(body.avatar))
-      )
+      if (!isAvatar(body.avatar))
         return json({ error: "Elige un avatar." }, 400);
       payload.avatar = body.avatar;
+      const avatarColor = body.avatarColor ?? "blue";
+      if (!isAvatarColor(avatarColor))
+        return json({ error: "Elige uno de los colores disponibles." }, 400);
+      payload.avatarColor = avatarColor;
     }
     if (action === "answer" || action === "next") {
       if (

@@ -14,6 +14,11 @@ const db = createClient(
 const questions = JSON.parse(
   readFileSync(new URL("../content/questions.json", import.meta.url)),
 );
+const companions = JSON.parse(
+  readFileSync(new URL("../content/companions.json", import.meta.url)),
+);
+const avatarIds = Object.keys(companions.avatars);
+const colorIds = Object.keys(companions.colors);
 const codes = [];
 async function cmd(action, payload, session = "", host = false) {
   const { data, error } = await db.rpc("rush_command", {
@@ -39,9 +44,29 @@ try {
   );
   const joined = await Promise.all(
     sessions.map((session, i) =>
-      cmd("join", { code, name: `Player ${i}`, avatar: "packet" }, session),
+      cmd(
+        "join",
+        {
+          code,
+          name: `Player ${i}`,
+          avatar: avatarIds[i % avatarIds.length],
+          avatarColor:
+            colorIds[Math.floor(i / avatarIds.length) % colorIds.length],
+        },
+        session,
+      ),
     ),
   );
+  for (const [index, snapshot] of joined.entries()) {
+    const player = snapshot.players.find(
+      (player) => player.id === snapshot.me.id,
+    );
+    assert.equal(player.avatar, avatarIds[index % avatarIds.length]);
+    assert.equal(
+      player.avatarColor,
+      colorIds[Math.floor(index / avatarIds.length) % colorIds.length],
+    );
+  }
   assert.equal((await cmd("state", { code }, "", true)).players.length, 40);
   await assert.rejects(
     cmd("join", { code, name: "Extra", avatar: "packet" }, "extra"),
@@ -93,6 +118,10 @@ try {
   assert.equal(timed.me.answer.elapsedMs, 45000);
   const resumed = await cmd("state", { code }, sessions[0]);
   assert.deepEqual(resumed.me.answer, timed.me.answer);
+  assert.equal(
+    resumed.players.find((player) => player.id === resumed.me.id).avatarColor,
+    colorIds[0],
+  );
   await cmd("finish", { code }, "", true);
   const closed = await cmd("state", { code }, sessions[0]);
   assert.equal(closed.room.status, "finished");
@@ -128,6 +157,7 @@ try {
     await cmd("next", { code: c, index }, "finisher");
   }
   const complete = await cmd("state", { code: c }, "finisher");
+  assert.equal(complete.players[0].avatarColor, "blue");
   assert.equal(complete.room.status, "finished");
   assert.equal(complete.players[0].points, 1200);
   // An unprivileged JWT cannot call privileged functions or read private tables.

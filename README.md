@@ -15,6 +15,8 @@ Una carrera de preguntas para **Redes de Computadoras 1**, diseñada para hasta 
 
 La inscripción se cierra al iniciar. Cada sala admite 40 participantes y vence a las 24 horas. Si alguien recarga, recupera su partida en el mismo navegador. Cambiar de dispositivo o borrar cookies no transfiere la sesión. Se necesita internet durante la actividad.
 
+La entrada desde el celular tiene dos pasos: sala y apodo, después compañero y color. Hay ocho compañeros y cinco colores de la paleta del proyecto, con vista previa. La selección aparece en la sala de espera, el panel del anfitrión y el podio; el navegador recuerda la apariencia para la siguiente partida. El catálogo y sus colores viven en `content/companions.json` y se validan también en el servidor y la base de datos.
+
 ## Reglas
 
 - 12 preguntas, cuatro por tema: modelo OSI, dispositivos y topologías.

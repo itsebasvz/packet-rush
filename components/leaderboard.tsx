@@ -65,6 +65,7 @@ export function Leaderboard({
                 </span>
                 <Mascot
                   avatar={player.avatar}
+                  color={player.avatarColor}
                   size={64}
                   celebrate={player.rank === 1}
                 />
@@ -89,7 +90,11 @@ export function Leaderboard({
           {state.players.map((player) => (
             <li key={player.id}>
               <span className="roster-avatar">
-                <Mascot avatar={player.avatar} size={42} />
+                <Mascot
+                  avatar={player.avatar}
+                  color={player.avatarColor}
+                  size={42}
+                />
               </span>
               <strong>{player.name}</strong>
               <span className="roster-joined">En la sala</span>
@@ -144,7 +149,11 @@ export function Leaderboard({
                         left: `clamp(0px, calc(${(player.correct / 12) * 100}% - 16px), calc(100% - 32px))`,
                       }}
                     >
-                      <Mascot avatar={player.avatar} size={32} />
+                      <Mascot
+                        avatar={player.avatar}
+                        color={player.avatarColor}
+                        size={32}
+                      />
                     </span>
                   </div>
                   <div className="racer-meta">

@@ -8,8 +8,19 @@ test("la entrada funciona en móvil y conserva la sesión al recargar", async ({
     page.getByRole("heading", { name: /Pequeño paquete/ }),
   ).toBeVisible();
   await expect(page.getByLabel("Código de la sala")).toBeVisible();
+  await page.getByLabel("Código de la sala").fill("ABC234");
+  await page.getByLabel("Tu apodo").fill("Mi paquete");
+  await page.getByRole("button", { name: "PERSONALIZAR COMPAÑERO" }).click();
   await expect(
     page.getByRole("button", { name: "Paquetito", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "Satélite", exact: true }).click();
+  await page.getByRole("button", { name: "Color Menta", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Satélite", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await expect(
+    page.getByRole("button", { name: "Color Menta", exact: true }),
   ).toHaveAttribute("aria-pressed", "true");
   const horizontal = await page.evaluate(
     () => document.documentElement.scrollWidth > innerWidth,
@@ -64,6 +75,7 @@ test("dos participantes completan una carrera con QR, reloj, explicaciones y pod
         const p = await c.newPage();
         await p.goto(`/?code=${code}`);
         await p.getByLabel("Tu apodo").fill(`Navegador ${i + 1}`);
+        await p.getByRole("button", { name: "PERSONALIZAR COMPAÑERO" }).click();
         await p.getByRole("button", { name: /ENTRAR A LA SALA/ }).click();
         await expect(
           p.getByRole("heading", { name: /Todo listo/ }),

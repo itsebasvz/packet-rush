@@ -1,0 +1,73 @@
+{
+  "avatars": {
+    "packet": {
+      "name": "Paquetito",
+      "description": "Pequeño paquete, grandes aventuras."
+    },
+    "robot": {
+      "name": "Router bot",
+      "description": "Siempre encuentra un buen camino."
+    },
+    "rocket": {
+      "name": "Cohete",
+      "description": "Listo para despegar por la red."
+    },
+    "computer": {
+      "name": "Compu",
+      "description": "Tu conexión con cada nuevo reto."
+    },
+    "cloud": {
+      "name": "Nubecita",
+      "description": "Ideas ligeras que llegan muy lejos."
+    },
+    "satellite": {
+      "name": "Satélite",
+      "description": "Una señal de que vas por buen camino."
+    },
+    "octopus": {
+      "name": "Pulpi",
+      "description": "Muchos brazos y un montón de conexiones."
+    },
+    "alien": {
+      "name": "Marciano",
+      "description": "La curiosidad viene de otro planeta."
+    }
+  },
+  "colors": {
+    "blue": {
+      "name": "Cielo",
+      "body": "#7dcdf4",
+      "detail": "#4fb3e8",
+      "accent": "#4F3DD9",
+      "eyes": "#1F1F1F"
+    },
+    "mint": {
+      "name": "Menta",
+      "body": "#ACF0D1",
+      "detail": "#00A63E",
+      "accent": "#4F3DD9",
+      "eyes": "#1F1F1F"
+    },
+    "pink": {
+      "name": "Rosa",
+      "body": "#ff83ae",
+      "detail": "#4F3DD9",
+      "accent": "#4F3DD9",
+      "eyes": "#1F1F1F"
+    },
+    "indigo": {
+      "name": "Índigo",
+      "body": "#4F3DD9",
+      "detail": "#3b2da8",
+      "accent": "#7dcdf4",
+      "eyes": "#ffffff"
+    },
+    "sun": {
+      "name": "Sol",
+      "body": "#FFB200",
+      "detail": "#4F3DD9",
+      "accent": "#4F3DD9",
+      "eyes": "#1F1F1F"
+    }
+  }
+}

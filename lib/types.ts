@@ -1,4 +1,5 @@
-export type Avatar = "packet" | "robot" | "rocket" | "computer";
+import type { Avatar, AvatarColor } from "./appearance";
+export type { Avatar, AvatarColor } from "./appearance";
 export type Question = {
   id: string;
   topic: string;
@@ -16,6 +17,7 @@ export type Racer = {
   id: string;
   name: string;
   avatar: Avatar;
+  avatarColor: AvatarColor;
   correct: number;
   answered: number;
   points: number;

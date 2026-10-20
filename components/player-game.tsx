@@ -90,7 +90,11 @@ export function PlayerGame({ code }: { code: string }) {
       {state.room.status === "waiting" ? (
         <section className="card waiting center">
           <span className="eyebrow">PAQUETE CONECTADO</span>
-          <Mascot avatar={racer?.avatar} size={148} />
+          <Mascot
+            avatar={racer?.avatar}
+            color={racer?.avatarColor}
+            size={148}
+          />
           <h1>
             Todo listo,
             <br />
@@ -118,7 +122,12 @@ export function PlayerGame({ code }: { code: string }) {
         <>
           <section className="finish-hero center">
             <span className="eyebrow">¡CARRERA COMPLETADA!</span>
-            <Mascot avatar={racer?.avatar} size={132} celebrate />
+            <Mascot
+              avatar={racer?.avatar}
+              color={racer?.avatarColor}
+              size={132}
+              celebrate
+            />
             <h1>¡Bien entregado!</h1>
             <p className="muted">
               Tu paquete recorrió la red y tú aprendiste en el camino.
@@ -145,7 +154,12 @@ export function PlayerGame({ code }: { code: string }) {
         </>
       ) : me?.complete ? (
         <section className="card center">
-          <Mascot avatar={racer?.avatar} size={128} celebrate />
+          <Mascot
+            avatar={racer?.avatar}
+            color={racer?.avatarColor}
+            size={128}
+            celebrate
+          />
           <h1>¡Terminaste tu recorrido!</h1>
           <p className="muted">
             Tienes {racer?.correct} aciertos y {racer?.points} puntos. El resto
