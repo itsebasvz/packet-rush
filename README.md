@@ -2,6 +2,8 @@
 
 Una carrera de preguntas para **Redes de Computadoras 1**, diseñada para hasta 40 personas desde sus celulares. Cada jugador controla un paquete, responde 12 preguntas y compite en un ranking compartido.
 
+**[Abrir el juego](https://packet-rush-drab.vercel.app) · [Panel del anfitrión](https://packet-rush-drab.vercel.app/host)**
+
 ## Jugar en clase
 
 1. Abre `/host` y entra con la contraseña del anfitrión.

@@ -42,15 +42,26 @@ export function Leaderboard({
                 {p.name}
                 {mine === p.id && <span className="you"> tú</span>}
               </strong>
-              <div
-                className="track"
-                role="progressbar"
-                aria-label={`Aciertos de ${p.name}`}
-                aria-valuemin={0}
-                aria-valuemax={12}
-                aria-valuenow={p.correct}
-              >
-                <span style={{ width: `${(p.correct / 12) * 100}%` }} />
+              <div className="race-lane">
+                <div
+                  className="track"
+                  role="progressbar"
+                  aria-label={`Aciertos de ${p.name}`}
+                  aria-valuemin={0}
+                  aria-valuemax={12}
+                  aria-valuenow={p.correct}
+                >
+                  <span style={{ width: `${(p.correct / 12) * 100}%` }} />
+                </div>
+                <span
+                  className="packet-marker"
+                  aria-hidden="true"
+                  style={{
+                    left: `clamp(0px, calc(${(p.correct / 12) * 100}% - 12px), calc(100% - 24px))`,
+                  }}
+                >
+                  <Mascot avatar={p.avatar} size={24} />
+                </span>
               </div>
               <small>
                 {p.correct}/12 aciertos · {p.answered}/12 respondidas
