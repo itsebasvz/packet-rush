@@ -137,8 +137,12 @@ test("dos participantes completan una carrera con QR, reloj, explicaciones y pod
       }),
     );
     await expect(
-      hp.getByRole("link", { name: "DESCARGAR RESULTADOS CSV" }),
+      hp.getByRole("heading", { name: "¡Tenemos podio!" }),
     ).toBeVisible({ timeout: 10000 });
+    await hp.getByRole("button", { name: "CONTROLES", exact: true }).click();
+    await expect(
+      hp.getByRole("link", { name: "DESCARGAR RESULTADOS CSV" }),
+    ).toBeVisible();
   } finally {
     await host.close();
     await a.close();

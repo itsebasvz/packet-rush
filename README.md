@@ -13,6 +13,8 @@ Una carrera de preguntas para **Redes de Computadoras 1**, diseñada para hasta 
 5. Al completar todos el recorrido aparece el podio. También puedes terminar anticipadamente.
 6. Descarga los resultados como CSV o crea otra carrera.
 
+Al dar la salida, el panel cambia automáticamente a una vista de proyección que aprovecha toda la ventana. **Pantalla completa** amplía la carrera y **Controles** permite terminarla o descargar resultados. Las pistas muestran preguntas respondidas; las posiciones siguen dependiendo de los aciertos y el desempate por tiempo. El podio es provisional hasta cerrar la partida. Cada nueva llegada activa una celebración con fuegos artificiales y podio animado; se respeta la preferencia de movimiento reducido. Si el grupo no cabe con buena legibilidad, las páginas cambian cada diez segundos y pueden pausarse o recorrerse manualmente.
+
 La inscripción se cierra al iniciar. Cada sala admite 40 participantes y vence a las 24 horas. Si alguien recarga, recupera su partida en el mismo navegador. Cambiar de dispositivo o borrar cookies no transfiere la sesión. Se necesita internet durante la actividad.
 
 La entrada desde el celular tiene dos pasos: sala y apodo, después compañero y color. Hay ocho compañeros y cinco colores de la paleta del proyecto, con vista previa. La selección aparece en la sala de espera, el panel del anfitrión y el podio; el navegador recuerda la apariencia para la siguiente partida. El catálogo y sus colores viven en `content/companions.json` y se validan también en el servidor y la base de datos.

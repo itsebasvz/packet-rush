@@ -1,5 +1,6 @@
 import type { GameState } from "@/lib/types";
 import { Mascot } from "./mascot";
+import { RacePodium } from "./race-podium";
 
 export function Leaderboard({
   state,
@@ -52,28 +53,7 @@ export function Leaderboard({
         </span>
       </header>
       {final && state.players.length > 0 && (
-        <div className="podium">
-          {state.players
-            .filter((player) => player.rank <= 3)
-            .map((player) => (
-              <div
-                className={`podium-place place-${player.rank}`}
-                key={player.id}
-              >
-                <span className="medal">
-                  {player.rank === 1 ? "★" : player.rank}
-                </span>
-                <Mascot
-                  avatar={player.avatar}
-                  color={player.avatarColor}
-                  size={64}
-                  celebrate={player.rank === 1}
-                />
-                <strong>{player.name}</strong>
-                <span>{player.points} pts</span>
-              </div>
-            ))}
-        </div>
+        <RacePodium players={state.players} final celebrating />
       )}
       {!state.players.length ? (
         <div className="roster-empty">

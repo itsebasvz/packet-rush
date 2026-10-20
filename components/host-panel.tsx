@@ -6,6 +6,7 @@ import type { GameState } from "@/lib/types";
 import { useGame } from "./use-game";
 import { Mascot } from "./mascot";
 import { Leaderboard } from "./leaderboard";
+import { RaceDashboard } from "./race-dashboard";
 export function HostPanel() {
   const [authenticated, setAuthenticated] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -17,6 +18,7 @@ export function HostPanel() {
   const [url, setUrl] = useState("");
   const [confirmClose, setConfirmClose] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showControls, setShowControls] = useState(false);
   const { state, error, busy, act, refresh } = useGame(
     authenticated ? code : "",
   );
@@ -74,6 +76,7 @@ export function HostPanel() {
     setLocalBusy(true);
     setLocalError("");
     setConfirmClose(false);
+    setShowControls(false);
     try {
       const data = await api<GameState>("game", { action: "create" });
       setCode(data.room.code);
@@ -104,6 +107,14 @@ export function HostPanel() {
       : status === "finished"
         ? "Carrera finalizada"
         : "Esperando al grupo";
+
+  const projecting =
+    authenticated && !!state && status !== "waiting" && !showControls;
+  useEffect(() => {
+    if (!projecting) return;
+    document.body.classList.add("is-projecting");
+    return () => document.body.classList.remove("is-projecting");
+  }, [projecting]);
 
   if (!loaded)
     return (
@@ -147,6 +158,15 @@ export function HostPanel() {
         </section>
       </main>
     );
+  if (projecting && state)
+    return (
+      <RaceDashboard
+        state={state}
+        error={localError || error}
+        onControls={() => setShowControls(true)}
+        onRefresh={() => void refresh()}
+      />
+    );
   return (
     <main id="main" className="host-layout">
       <div className="host-title">
@@ -157,19 +177,29 @@ export function HostPanel() {
             Comparte la sala, da la salida y sigue cada salto.
           </p>
         </div>
-        <button
-          className="btn outline"
-          onClick={async () => {
-            try {
-              await api("host", { logout: true });
-              setAuthenticated(false);
-            } catch (event) {
-              setLocalError((event as Error).message);
-            }
-          }}
-        >
-          SALIR
-        </button>
+        <div className="host-header-actions">
+          {state && status !== "waiting" && (
+            <button
+              className="btn primary"
+              onClick={() => setShowControls(false)}
+            >
+              PROYECTAR CARRERA <span aria-hidden="true">⛶</span>
+            </button>
+          )}
+          <button
+            className="btn outline"
+            onClick={async () => {
+              try {
+                await api("host", { logout: true });
+                setAuthenticated(false);
+              } catch (event) {
+                setLocalError((event as Error).message);
+              }
+            }}
+          >
+            SALIR
+          </button>
+        </div>
       </div>
       {(localError || error) && (
         <div className="notice host-notice" role="alert">
